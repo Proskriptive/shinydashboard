@@ -5,7 +5,9 @@
 \title{Dashboard page}
 \usage{
 dashboardPage(header, sidebar, body, footer, controlbar, title = NULL,
-  skin = c("blue", "black", "purple", "green", "red", "yellow"))
+  skin = c("blue", "blue-light", "black", "black-light", "purple",
+  "purple-light", "green", "green-light", "red", "red-light", "yellow",
+  "yellow-light"), collapse_sidebar = FALSE)
 }
 \arguments{
 \item{header}{A header created by \code{dashboardHeader}.}
@@ -34,9 +36,11 @@ if (interactive()) {
 library(shiny)
 shinyApp(
   ui = dashboardPage(
-    dashboardHeader(),
-    dashboardSidebar(),
-    dashboardBody(),
+    header = dashboardHeader(),
+    sidebar = dashboardSidebar(),
+    body = dashboardBody(),
+    footer = dashboardFooter(),
+    controlbar = dashboardControlbar(),
     title = "Dashboard example"
   ),
   server = function(input, output) { }

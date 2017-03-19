@@ -21,21 +21,27 @@
 #' library(shiny)
 #' shinyApp(
 #'   ui = dashboardPage(
-#'     dashboardHeader(),
-#'     dashboardSidebar(),
-#'     dashboardBody(),
+#'     header = dashboardHeader(),
+#'     sidebar = dashboardSidebar(),
+#'     body = dashboardBody(),
+#'     footer = dashboardFooter(),
+#'     controlbar = dashboardControlbar(),
 #'     title = "Dashboard example"
 #'   ),
 #'   server = function(input, output) { }
 #' )
 #' }
 #' @export
-dashboardPage <- function(header, sidebar, body, footer ,controlbar, title = NULL,
-                          skin = c("blue", "black", "purple", "green", "red", "yellow")) {
+dashboardPage <- function(header, sidebar, body, footer, controlbar, title = NULL,
+                          skin = c("blue", "blue-light","black","black-light", "purple","purple-light", "green","green-light",
+                                   "red","red-light", "yellow","yellow-light"),
+                          collapse_sidebar = FALSE) {
 
   tagAssert(header, type = "header", class = "main-header")
   tagAssert(sidebar, type = "aside", class = "main-sidebar")
   tagAssert(body, type = "div", class = "content-wrapper")
+  # tagAssert(footer, type = "footer", class = "main-footer")
+  # tagAssert(controlbar, type = "aside", class = "control-sidebar")
   skin <- match.arg(skin)
 
   extractTitle <- function(header) {
@@ -54,24 +60,53 @@ dashboardPage <- function(header, sidebar, body, footer ,controlbar, title = NUL
   title <- title %OR% extractTitle(header)
 
   content <- div(class = "wrapper",
-                 header,
-                 sidebar,
-                 body,
-                 footer,
-                 controlbar
-  )
-
-  # if the sidebar has the class "start-collapsed", it means that the user set
-  # the `collapsed` argument of `dashboardSidebar` to TRUE
-  collapsed <- "start-collapsed" %in% strsplit(sidebar$attribs$class, " ")[[1]]
+                 header, sidebar, body, footer, controlbar)
 
   addDeps(
+
     tags$body(
-      # the "sidebar-collapse" class on the body means that the sidebar should
-      # the collapsed (AdminLTE code)
-      class = paste0("skin-", skin, if (collapsed) " sidebar-collapse"),
+      class = paste0("hold-transition skin-", skin, " sidebar-mini",ifelse(collapse_sidebar," sidebar-collapse","")),
       style = "min-height: 611px;",
-      shiny::bootstrapPage(content, title = title)
+      shiny::bootstrapPage(content, title = title)#,
+      # add adminLTE scripts at the end of body
+      # HTML('<!-- jQuery 2.2.0 -->
+      #       <script src="AdminLTE-2.0.6/plugins/jQuery/jQuery-2.2.0.min.js"></script>
+      #       <!-- jQuery UI 1.11.4 -->
+      #       <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+      #       <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+      #       <script>
+      #       $.widget.bridge("uibutton", $.ui.button);
+      #       </script>
+      #       <!-- Bootstrap 3.3.6 -->
+      #       <script src="AdminLTE-2.0.6/bootstrap/js/bootstrap.min.js"></script>
+      #       <!-- Morris.js charts -->
+      #       <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+      #       <script src="AdminLTE-2.0.6/plugins/morris/morris.min.js"></script>
+      #       <!-- Sparkline -->
+      #       <script src="AdminLTE-2.0.6/plugins/sparkline/jquery.sparkline.min.js"></script>
+      #       <!-- jvectormap -->
+      #       <script src="AdminLTE-2.0.6/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+      #       <script src="AdminLTE-2.0.6/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+      #       <!-- jQuery Knob Chart -->
+      #       <script src="AdminLTE-2.0.6/plugins/knob/jquery.knob.js"></script>
+      #       <!-- daterangepicker -->
+      #       <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+      #       <script src="AdminLTE-2.0.6/plugins/daterangepicker/daterangepicker.js"></script>
+      #       <!-- datepicker -->
+      #       <script src="AdminLTE-2.0.6/plugins/datepicker/bootstrap-datepicker.js"></script>
+      #       <!-- Bootstrap WYSIHTML5 -->
+      #       <script src="AdminLTE-2.0.6/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+      #       <!-- Slimscroll -->
+      #       <script src="AdminLTE-2.0.6/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+      #       <!-- FastClick -->
+      #       <script src="AdminLTE-2.0.6/plugins/fastclick/fastclick.js"></script>
+      #       <!-- AdminLTE App -->
+      #       <script src="AdminLTE-2.0.6/dist/js/app.min.js"></script>
+      #       <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+      #       <!-- <script src="dist/js/pages/dashboard.js"></script> -->
+      #       <!-- AdminLTE for demo purposes -->
+      #       <!-- <script src="dist/js/demo.js"></script> -->
+      #      ')
     )
   )
 }
