@@ -3,6 +3,7 @@
 \name{sidebarMenu}
 \alias{sidebarMenu}
 \alias{menuItem}
+\alias{menuSegment}
 \alias{menuSubItem}
 \title{Create a dashboard sidebar menu and menu items.}
 \usage{
@@ -10,6 +11,8 @@ sidebarMenu(..., id = NULL, .list = NULL)
 
 menuItem(text, ..., icon = NULL, badgeLabel = NULL, badgeColor = "green",
   tabName = NULL, href = NULL, newtab = TRUE, selected = NULL)
+
+menuSegment(text)
 
 menuSubItem(text, tabName = NULL, href = NULL, newtab = TRUE,
   icon = shiny::icon("angle-double-right"), selected = NULL)

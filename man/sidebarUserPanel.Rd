@@ -25,4 +25,3 @@ A panel displaying user information in a sidebar
 Other sidebar items: \code{\link{sidebarMenu}},
   \code{\link{sidebarSearchForm}}
 }
-

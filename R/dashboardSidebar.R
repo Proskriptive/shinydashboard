@@ -403,6 +403,13 @@ menuItem <- function(text, ..., icon = NULL, badgeLabel = NULL, badgeColor = "gr
     do.call(tags$ul, c(class = "treeview-menu", subItems))
   )
 }
+#' @rdname sidebarMenu
+#' @export
+menuSegment <- function(text) {
+
+  tags$li(class="header", text)
+
+}
 
 #' @rdname sidebarMenu
 #' @export
