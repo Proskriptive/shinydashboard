@@ -86,7 +86,7 @@
 #' )
 #' }
 #' @export
-dashboardHeader <- function(..., title = NULL, titleWidth = NULL, user = dashboardUser() ,disable = FALSE, .list = NULL) {
+dashboardHeader <- function(..., title = NULL, titleWidth = NULL, user = dashboardUser() ,disable = FALSE, .list = NULL,isDisplayControlbar=FALSE) {
   items <- c(list(...), .list)
   lapply(items, tagAssert, type = "li", class = "dropdown")
 
@@ -131,11 +131,13 @@ dashboardHeader <- function(..., title = NULL, titleWidth = NULL, user = dashboa
                                    user,
                                    # add control bar on top right of header panel
                                    # HTML('<li><a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a></li>')
+                                   if(isDisplayControlbar)
+                                   {
                                    tags$li(
                                      tags$a(
                                        href="#", `data-toggle`="control-sidebar", shiny::icon("gears")
                                      )
-                                   )
+                                   )}
                            )
                        )
               )

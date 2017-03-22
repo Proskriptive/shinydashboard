@@ -4,7 +4,7 @@ library(shiny)
 library(shinydashboard)
 
 header <- dashboardHeader(
-  title = "Big Dashboard Demo",
+  title = "Dashboard Demo",
 
   # Dropdown menu for messages
   dropdownMenu(
@@ -66,7 +66,7 @@ sidebar <- dashboardSidebar(
     "User Name",
     subtitle = a(href = "#", icon("circle", class = "text-success"), "Online"),
     # Image file should be in www/ subdir
-    image = paste0(getwd(),"/www/img/userimage.png")
+    image =paste0("shinydashboard", "-", as.character(utils::packageVersion("shinydashboard")), "/img/guang.jpg")
   ),
   sidebarSearchForm(label = "Enter a number", "searchText", "searchButton"),
   sidebarMenu(
@@ -327,7 +327,26 @@ server <- function(input, output) {
 
 ui <- dashboardPage(header,
                     sidebar,
-                    body, footer = dashboardFooter(),controlbar = dashboardControlbar()
+                    body, footer = dashboardFooter(),controlbar = CreateControlBarRight( CreateNavTabs(tabID = "home-tab",icon = icon("home")),
+                                                                                         CreateNavTabs(tabID = "settings-tab",icon = icon("gears")),
+                                                                                      paneldivs = { div( class = "tab-content" ,div(class = "tab-pane",id = "control-sidebar-settings-tab",
+                                                                                                         CreateSettingsTabPanel(CreateFormPanel("Report Panel Usage","some Information about this general setting option"),
+                                                                                                                                CreateFormPanel("Allow mail redirect","Other sets of options are available"),
+                                                                                                                                CreateFormPanel("Expose author name in posts","Allow the user to show his name in blog posts"),
+                                                                                                                                panelHeading =  "General Settings"
+                                                                                                                                ),
+                                                                                                         CreateSettingsTabPanel(CreateFormPanel("Show me as Online",""),
+                                                                                                                                CreateFormPanel("Turn off Notifications",""),
+                                                                                                                                CreateFormPanel("Delete Chat History","",icon = icon("trash")),
+                                                                                                                                panelHeading =  "Chat settings")),
+                                                                                                         CreateHomeTabPanel(CreateListItems(Header = "Custom Template Design",ProgressValue = 70,ProgressBarClass = "danger")
+                                                                                                                            ,CreateListItems(Header = "Update Resume",ProgressValue = 95,ProgressBarClass = "success")
+                                                                                                                            ,CreateListItems(Header = "Laravel Integration",ProgressValue = 50,ProgressBarClass = "warning")
+                                                                                                                            ,panelHeading = "Tasks Progress")
+                                                                                      )
+                                                                                        }
+                                                                                      )
+
 )
 
 shinyApp(ui, server)
