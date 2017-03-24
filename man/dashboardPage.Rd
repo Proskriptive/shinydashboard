@@ -4,7 +4,7 @@
 \alias{dashboardPage}
 \title{Dashboard page}
 \usage{
-dashboardPage(header, sidebar, body, footer, controlbar, title = NULL,
+dashboardPage(header, sidebar, body, controlbar, title = NULL,
   skin = c("blue", "blue-light", "black", "black-light", "purple",
   "purple-light", "green", "green-light", "red", "red-light", "yellow",
   "yellow-light"), collapse_sidebar = FALSE)
@@ -15,8 +15,6 @@ dashboardPage(header, sidebar, body, footer, controlbar, title = NULL,
 \item{sidebar}{A sidebar created by \code{dashboardSidebar}.}
 
 \item{body}{A body created by \code{dashboardBody}.}
-
-\item{footer}{A footer created by \code{dashboardFooter}.}
 
 \item{controlbar}{A controlbar created by \code{dashboardControlbar}.}
 

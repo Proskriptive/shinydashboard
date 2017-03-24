@@ -124,8 +124,19 @@ dashboardSidebar <- function(..., disable = FALSE, width = NULL, collapsed = FAL
       class = "sidebar",
       `data-disable` = if (disable) 1 else NULL,
       list(...)
-    )
+    ), tags$footer("Created By", tags$img(style = "max-width: 60%;", src = paste0("shinydashboard", "-", as.character(utils::packageVersion("shinydashboard")),"/img/Proskriptive-logo.png")) ,
+                    align = "center",
+                    style = "
+                    position:absolute;
+                    bottom:0;
+                    height:50px;   /* Height of the footer */
+                    color: blue;
+                    padding: 10px;
+                    background-color: white;
+                    z-index: 1000;")
   )
+
+
 }
 
 #' A panel displaying user information in a sidebar
