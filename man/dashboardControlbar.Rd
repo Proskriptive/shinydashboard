@@ -2,12 +2,14 @@
 % Please edit documentation in R/dashboardControlbar.R
 \name{dashboardControlbar}
 \alias{dashboardControlbar}
-\title{Create a dashboard control sidebar.}
+\title{Create a dashboard control Right sidebar.}
 \usage{
-dashboardControlbar(ctrlHTML = NULL)
+dashboardControlbar(..., paneldivs = NULL)
 }
 \arguments{
-\item{...}{Items to put in the sidebar.}
+\item{...}{Items to put in the Control Bar.}
+
+\item{paneldivs}{Divs for nav tabs.}
 }
 \description{
 TODO: create functions that can create sub-components in control-sidebar,

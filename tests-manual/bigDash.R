@@ -3,6 +3,7 @@
 library(shiny)
 library(shinydashboard)
 
+
 header <- dashboardHeader(
   title = "Dashboard Demo",
 isDisplayControlbar = TRUE,
@@ -97,6 +98,43 @@ sidebar <- dashboardSidebar(
     )
   ),
   sidebarMenuOutput("menu")
+
+)
+
+controlbar <- dashboardControlbar(
+  createNavTabs(
+    tabID = "home-tab",
+    icon = icon("home")),
+  createNavTabs(
+    tabID = "settings-tab",
+    icon = icon("gears")),
+  paneldivs = {
+    div( class = "tab-content" ,
+    div(class = "tab-pane",id = "control-sidebar-settings-tab",
+     createSettingsTabPanel(
+      createFormPanel("Report Panel Usage","some Information about this general setting option"),
+      createFormPanel("Allow mail redirect","Other sets of options are available"),
+      createFormPanel("Expose author name in posts","Allow the user to show his name in blog posts"),
+        panelHeading =  "General Settings7"
+                           ),
+    createSettingsTabPanel(
+      createFormPanel("Show me as Online",""),
+      createFormPanel("Turn off Notifications",""),
+      createFormPanel("Delete Chat History","",icon = icon("trash")),
+          panelHeading =  "Chat settings")),
+    createHomeTabPanel(
+      createListItems(Header = "Custom Template Design",
+                      ProgressValue = 70,
+                      ProgressBarClass = "danger")
+     ,createListItems(Header = "Update Resume",
+                      ProgressValue = 95,
+                      ProgressBarClass = "success")
+     ,createListItems(Header = "Laravel Integration",
+                      ProgressValue = 50,
+                      ProgressBarClass = "warning")
+                     ,panelHeading = "Tasks Progress")
+                                     )
+                                     }
 )
 
 body <- dashboardBody(tabItems(
@@ -273,6 +311,22 @@ server <- function(input, output) {
     data <- histdata[seq_len(input$slider)]
     hist(data)
   })
+  predicted <- reactive({
+    hw <- HoltWinters(ldeaths)
+    predict(hw, n.ahead = input$months,
+            prediction.interval = TRUE,
+            level = as.numeric(input$interval))
+  })
+  output$point <- renderText({
+    paste0('X = ', strftime(req(input$dygraph_click$x_closest_point), "%d %b %Y"),
+           '; Y = ', req(input$dygraph_click$y_closest_point))
+  })
+
+
+  output$plot2 <- renderDygraph({
+    lungDeaths <- cbind(ldeaths, mdeaths, fdeaths)
+    dyRangeSelector(dygraph(lungDeaths, main = "Deaths from Lung Disease (UK)"), dateWindow = c("1974-01-01", "1980-01-01"))
+  })
 
   output$orderNum <- renderText({
     prettyNum(input$orders, big.mark = ",")
@@ -317,8 +371,7 @@ server <- function(input, output) {
   output$tabset1Selected <- renderText({
     input$tabset1
   })
-  test.table <- data.frame(lapply(1:8, function(x) {1:10}))
-  names(test.table) <- paste0('This_is_a_very_long_name_', 1:8)
+
 
   output$table <- renderTable({
     test.table
@@ -327,26 +380,8 @@ server <- function(input, output) {
 
 ui <- dashboardPage(header,
                     sidebar,
-                    body, footer = dashboardFooter(),controlbar = CreateControlBarRight( CreateNavTabs(tabID = "home-tab",icon = icon("home")),
-                                                                                         CreateNavTabs(tabID = "settings-tab",icon = icon("gears")),
-                                                                                      paneldivs = { div( class = "tab-content" ,div(class = "tab-pane",id = "control-sidebar-settings-tab",
-                                                                                                         CreateSettingsTabPanel(CreateFormPanel("Report Panel Usage","some Information about this general setting option"),
-                                                                                                                                CreateFormPanel("Allow mail redirect","Other sets of options are available"),
-                                                                                                                                CreateFormPanel("Expose author name in posts","Allow the user to show his name in blog posts"),
-                                                                                                                                panelHeading =  "General Settings"
-                                                                                                                                ),
-                                                                                                         CreateSettingsTabPanel(CreateFormPanel("Show me as Online",""),
-                                                                                                                                CreateFormPanel("Turn off Notifications",""),
-                                                                                                                                CreateFormPanel("Delete Chat History","",icon = icon("trash")),
-                                                                                                                                panelHeading =  "Chat settings")),
-                                                                                                         CreateHomeTabPanel(CreateListItems(Header = "Custom Template Design",ProgressValue = 70,ProgressBarClass = "danger")
-                                                                                                                            ,CreateListItems(Header = "Update Resume",ProgressValue = 95,ProgressBarClass = "success")
-                                                                                                                            ,CreateListItems(Header = "Laravel Integration",ProgressValue = 50,ProgressBarClass = "warning")
-                                                                                                                            ,panelHeading = "Tasks Progress")
-                                                                                      )
-                                                                                        }
-                                                                                      )
+                    body, controlbar)
 
-)
+
 
 shinyApp(ui, server)
