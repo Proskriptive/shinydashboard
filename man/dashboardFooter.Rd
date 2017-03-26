@@ -4,12 +4,14 @@
 \alias{dashboardFooter}
 \title{The footer of a dashboard page.}
 \usage{
-
-  dashboardFooter(mainText = HTML("<strong>Copyright &copy; 2016 <a href=\\"https://github.com/rstudio/shinydashboard\\">Shiny Dashboard</a>.</strong> All rights reserved."),
-  subText = HTML("<b>Version</b> 2.3.3"))
+dashboardFooter(mainText = "", subText = NULL)
 }
 \arguments{
-\item{...}{Items to put in the dashboard body.}
+\item{mainText}{A character or html argument.  Defines the left hand part of the footer.}
+
+\item{subText}{A character or html argument.  Defines the right hand part of the footer.}
+
+\item{...}{Items to put in the dashboard main footer}
 }
 \description{
 The footer typically contains copyright info. Another common use pattern

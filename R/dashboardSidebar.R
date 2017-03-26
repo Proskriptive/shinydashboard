@@ -124,18 +124,8 @@ dashboardSidebar <- function(..., disable = FALSE, width = NULL, collapsed = FAL
       class = "sidebar",
       `data-disable` = if (disable) 1 else NULL,
       list(...)
-    ), tags$footer("Created By", tags$img(style = "max-width: 60%;", src = paste0("shinydashboard", "-", as.character(utils::packageVersion("shinydashboard")),"/img/Proskriptive-logo.png")) ,
-                    align = "center",
-                    style = "
-                    position:absolute;
-                    bottom:0;
-                    height:50px;   /* Height of the footer */
-                    color: blue;
-                    padding: 10px;
-                    background-color: white;
-                    z-index: 1000;")
+    )
   )
-
 
 }
 
@@ -224,6 +214,8 @@ sidebarSearchForm <- function(textId, buttonId, label = "Search...",
 #' Menu items (but not sub-items) also may have an optional badge. A badge is a
 #' colored oval containing text.
 #'
+#'A footer is enabled by \code{dashboardFooter}.  This allows logo's or text to be
+#'placed at the bottom of the sidebar.
 #' @param text Text to show for the menu item.
 #' @param id For \code{sidebarMenu}, if \code{id} is present, this id will be
 #'   used for a Shiny input value, and it will report which tab is selected. For
@@ -459,3 +451,61 @@ menuSubItem <- function(text, tabName = NULL, href = NULL, newtab = TRUE,
     )
   )
 }
+
+
+
+#' The footer for the Sidebar in the dashboard
+#'
+#' The footer typically contains info about the company or application
+#' #' is for the footer to contain dynamic message commnuncation.
+#' The footer is statically locate at the bottom of the sidebar
+#' @param height the height as an integer, pixel e.g. 250px, or a css symbol
+#' @param color the color of the text
+#' @param backgroundColor the color of the background
+#' @export
+sidebarFooter <- function(...,height=NULL, color=NULL,backgroundColor=NULL) {
+  if(!is.null(color)){
+    validateColor(color)
+  }
+  if(!is.null(backgroundColor)){
+    validateColor(backgroundColor)
+  }
+  style <- paste0( "position:absolute;bottom:0; ",
+                   ifelse(is.null(height),"",paste0("height:",validateCssUnit(height),";"))  , # Height of the footer
+                   ifelse(is.null(color),"",paste0("","color:",color,";"))  , # Height of the footer
+                   "  padding: 10px;" ,
+                   ifelse(is.null(backgroundColor),"", paste0("background-color:", backgroundColor," ;") ),
+                   "  z-index: 1000;")
+  tags$footer(...,class = "sidebar-footer",style=style)
+
+}
+
+
+#' Create a dynamic footer output for shinydashboard sidebar (client side)
+#'
+#' This can be used as a placeholder for dynamically-generated \code{\link{dashboardSidebarFooter}}.
+#'
+#' @param outputId Output variable name.
+#' @param tag A tag function, like \code{tags$li} or \code{tags$ul}.
+#'
+#' @seealso \code{\link{renderSideboardFooter}} for the corresponding server side function
+#'   and examples.
+#' @family footer outputs
+#' @export
+sidebarFooterOutput <- function(outputId) {
+  moduleOutput(outputId = outputId, tag = tags$footer)
+}
+
+
+
+
+#' Create dynamic sidebar footer (server side)
+#'
+#' @inheritParams shiny::renderUI
+#'
+#' @seealso \code{\link{footerSidebarOutput}} for the corresponding client side function
+#'   and examples.
+#' @family sidebar outputs
+#' @export
+
+renderSidebarFooter <- shiny::renderUI
