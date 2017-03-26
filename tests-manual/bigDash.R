@@ -2,6 +2,7 @@
 
 library(shiny)
 library(shinydashboard)
+library(dygraphs)
 
 
 header <- dashboardHeader(
@@ -97,7 +98,8 @@ sidebar <- dashboardSidebar(
      tabName = "Tables"
     )
   ),
-  sidebarMenuOutput("menu")
+  sidebarMenuOutput("menu"),
+  sidebarFooter("Test Footer",img(src="img/Proskriptive-logo.png",width=100))
 
 )
 

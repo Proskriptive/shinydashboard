@@ -3,21 +3,26 @@
 #' The footer typically contains copyright info. Another common use pattern
 #' is for the footer to contain dynamic message commnuncation.
 #'
-#' @param ... Items to put in the dashboard body.
+#' @param ... Items to put in the dashboard main footer
+#' @param mainText A character or html argument.  Defines the left hand part of the footer.
+#' @param subText A character or html argument.  Defines the right hand part of the footer.
+
 #'
 #' @seealso \code{\link{tabItems}}, \code{\link{box}}, \code{\link{valueBox}}.
 #'
 #' @export
 dashboardFooter <- function(
-  mainText = HTML('<strong>Copyright &copy; 2016 <a href="https://github.com/rstudio/shinydashboard">Shiny Dashboard</a>.</strong> All rights reserved.'),
-  subText  = HTML("<b>Version</b> 2.3.3")) {
+  mainText = "",
+  subText  = NULL) {
 
   tags$footer(
     class="main-footer",
-    tags$div(
-      class="pull-right hidden-xs",
-      subText
-    ),
+    if (!missing(subText)) {
+      tags$div(
+        class="pull-right hidden-xs",
+        subText
+      )
+    }else{},
     mainText
   )
 
@@ -49,5 +54,6 @@ footerOutput <- function(outputId) {
 #' @family footer outputs
 #' @export
 renderFooter <- shiny::renderUI
+
 
 

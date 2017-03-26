@@ -18,5 +18,6 @@ This can be used as a placeholder for dynamically-generated \code{\link{dashboar
 \code{\link{renderFooter}} for the corresponding server side function
   and examples.
 
-Other footer outputs: \code{\link{renderFooter}}
+Other footer outputs: \code{\link{renderFooter}},
+  \code{\link{sidebarFooterOutput}}
 }

@@ -12,12 +12,12 @@ dashboardControlbar<-function(..., paneldivs = NULL)
 {
   items <- list(...)
 
-  Tabdiv <- list(paneldivs)
-  lapply(Tabdiv, tagAssert,type = "div")
+  tabDiv <- list(paneldivs)
+  lapply(tabDiv, tagAssert,type = "div")
   lapply(items, tagAssert, type = "li")
   tags$div(class = "Control-Bar Area",
            tags$aside(class = "control-sidebar control-sidebar-dark",tags$ul(class = "nav nav-tabs nav-justified control-sidebar-tabs",items)
-                      ,Tabdiv),
+                      ,tabDiv),
            tags$div(class = "control-sidebar-bg")
            )
 
@@ -51,17 +51,17 @@ createNavTabs <- function(tabID ,icon = NULL)
 #' @export
 createSettingsTabPanel <- function(...,panelHeading)
 {
-  FormPanel <- list(...)
-  lapply(FormPanel, tagAssert, type = "div")
+  formPanel <- list(...)
+  lapply(formPanel, tagAssert, type = "div")
   if( panelHeading == "General Settings")  {
     tags$div(class = "tab-Setting",tags$form(
       method = "post",tags$h3(class = "control-sidebar-heading",panelHeading),
-      FormPanel
+      formPanel
     ))
   }  else  {
     tags$div(class = "tab-chatSetting",tags$form(
       method = "post",tags$h3(class = "control-sidebar-heading",panelHeading),
-      FormPanel
+      formPanel
     ))
   }
 
@@ -110,7 +110,7 @@ createListItems <- function(Header,ProgressValue,ProgressBarClass)
 #' @param icon This will append icon to the Settings Element.
 #'
 #' @export
-createFormPanel <- function(Header,Description,icon = NULL)
+formPanel <- function(Header,Description,icon = NULL)
   {
      if(!is.null(icon))   {
        tagAssert(icon, type = "i")

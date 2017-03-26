@@ -76,6 +76,9 @@ can be automatically generated.) Sub-items are also able to activate
 
 Menu items (but not sub-items) also may have an optional badge. A badge is a
 colored oval containing text.
+
+A footer is enabled by \code{dashboardFooter}.  This allows logo's or text to be
+placed at the bottom of the sidebar.
 }
 \seealso{
 \code{\link{dashboardSidebar}} for example usage. For

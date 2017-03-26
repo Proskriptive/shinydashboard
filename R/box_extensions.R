@@ -550,7 +550,7 @@ panel_box <- function(..., id = NULL, title = NULL, metric_list = NULL,footer = 
 
       )
   }
-  headerPanel() <- NULL
+  headerTag <- NULL
   if (!is.null(titleTag) || !is.null(collapseTag) || !is.null(infoTag)) {
     headerTag <- div(class = "box-header",
                      titleTag,
