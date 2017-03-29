@@ -25,7 +25,7 @@ dashboardControlbar <- function(...) {
 #' @param icon An icon tag, created by \code{\link[shiny]{icon}}.
 
 #' @export
-createNavTabs <- function(tabID, icon = NULL) {
+navTabs <- function(tabID, icon = NULL) {
   if (!is.null(icon))
     tagAssert(icon, type = "i")
 
@@ -42,7 +42,7 @@ createNavTabs <- function(tabID, icon = NULL) {
 #' @param ... Form Items to Put in the Settings Tab Content Panel.
 #' @param panelHeading panel heading name
 #' @export
-createSettingsTabPanel <- function(..., panelHeading) {
+settingsTabPanel <- function(..., panelHeading) {
   formPanel <- list(...)
   lapply(formPanel, tagAssert, type = "div")
   if (panelHeading == "General Settings") {
@@ -65,7 +65,7 @@ createSettingsTabPanel <- function(..., panelHeading) {
 #' @param panelHeading panel heading name
 #'
 #' @export
-createHomeTabPanel <- function(..., panelHeading) {
+homeTabPanel <- function(..., panelHeading) {
   ListItems <- list(...)
   lapply(ListItems, tagAssert, type = "li")
   tags$div(class = "tab-pane active", id = "control-sidebar-home-tab",
@@ -77,18 +77,18 @@ createHomeTabPanel <- function(..., panelHeading) {
 #'
 #' It will be used to render the items present in the Home tab.
 #'
-#' @param Header This will contain the header text for the list element.
-#' @param ProgressValue This value moves the Progress bar.
-#' @param ProgressBarClass This is used to set the Bootstrap Class for displaying the Progress Bar.
+#' @param header This will contain the header text for the list element.
+#' @param progressValue This value moves the Progress bar.
+#' @param progressBarClass This is used to set the Bootstrap Class for displaying the Progress Bar.
 #'
 #' @export
-createListItems <- function(Header, ProgressValue, ProgressBarClass) {
-  if (ProgressBarClass %in% validStatuses) {
+listItems <- function(header, progressValue, progressBarClass) {
+  if (progressBarClass %in% validStatuses) {
     tags$li(a(href = "javascript:void(0)", tags$h4(class = "control-sidebar-subheading",
-      Header, tags$span(class = paste0("label label-",
-        ProgressBarClass, " pull-right"), ProgressValue)),
+      header, tags$span(class = paste0("label label-",
+        progressBarClass, " pull-right"), progressValue)),
       tags$div(class = "progress progress-xxs", tags$div(class = paste0("progress-bar progress-bar-",
-        ProgressBarClass), style = paste0("width:", ProgressValue,
+        progressBarClass), style = paste0("width:", progressValue,
         "%")))))
   }
 }
@@ -99,21 +99,21 @@ createListItems <- function(Header, ProgressValue, ProgressBarClass) {
 #'
 #' It will contain Form to be processed by user
 #'
-#' @param Header This will contain the header text for the form element.
-#' @param Description This Provides the description for the setting element.
+#' @param header This will contain the header text for the form element.
+#' @param description This Provides the description for the setting element.
 #' @param icon This will append icon to the Settings Element.
 #'
 #' @export
-formPanel <- function(Header, Description, icon = NULL) {
+formPanel <- function(header, description, icon = NULL) {
   if (!is.null(icon)) {
     tagAssert(icon, type = "i")
     tags$div(class = "form-group", tags$label(class = "control-sidebar-subheading",
-      Header, a(href = "javascript:void(0)", class = "text-red pull-right",
+      header, a(href = "javascript:void(0)", class = "text-red pull-right",
         icon)))
 
   } else {
     tags$div(class = "form-group", tags$label(class = "control-sidebar-subheading",
-      Header, customCheckboxInput()), tags$p(Description))
+      header, customCheckboxInput()), tags$p(description))
   }
 
 }
