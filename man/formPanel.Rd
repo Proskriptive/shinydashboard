@@ -4,12 +4,12 @@
 \alias{formPanel}
 \title{Creates the Form for the settings Panel which consists of checkboxes in the dashboard Control bar.}
 \usage{
-formPanel(Header, Description, icon = NULL)
+formPanel(header, description, icon = NULL)
 }
 \arguments{
-\item{Header}{This will contain the header text for the form element.}
+\item{header}{This will contain the header text for the form element.}
 
-\item{Description}{This Provides the description for the setting element.}
+\item{description}{This Provides the description for the setting element.}
 
 \item{icon}{This will append icon to the Settings Element.}
 }

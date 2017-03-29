@@ -4,7 +4,7 @@
 \alias{dashboardControlbar}
 \title{Create a dashboard control Right sidebar.}
 \usage{
-dashboardControlbar(..., paneldivs = NULL)
+dashboardControlbar(...)
 }
 \arguments{
 \item{...}{Items to put in the Control Bar.}
