@@ -31,7 +31,7 @@
 #' )
 #' }
 #' @export
-dashboardPage <- function(header, sidebar, body, controlbar, title = NULL,
+dashboardPage <- function(header, sidebar, body, controlbar=NULL,footer=NULL, title = NULL,
                           skin = c("blue", "blue-light","black","black-light", "purple","purple-light", "green","green-light",
                                    "red","red-light", "yellow","yellow-light"),
                           collapse_sidebar = FALSE) {
@@ -39,8 +39,14 @@ dashboardPage <- function(header, sidebar, body, controlbar, title = NULL,
   tagAssert(header, type = "header", class = "main-header")
   tagAssert(sidebar, type = "aside", class = "main-sidebar")
   tagAssert(body, type = "div", class = "content-wrapper")
-  # tagAssert(footer, type = "footer", class = "main-footer")
-  # tagAssert(controlbar, type = "aside", class = "control-sidebar")
+
+  if (!is.null(footer)) {
+    tagAssert(footer, type = "footer", class = "main-footer")
+  }
+  if (!is.null(controlbar)) {
+     tagAssert(controlbar, type = "aside", class = "control-sidebar")
+
+  }
   skin <- match.arg(skin)
 
   extractTitle <- function(header) {
@@ -59,7 +65,7 @@ dashboardPage <- function(header, sidebar, body, controlbar, title = NULL,
   title <- title %OR% extractTitle(header)
 
   content <- div(class = "wrapper",
-                 header, sidebar, body, controlbar)
+                 header, sidebar, body, footer,controlbar)
 
   addDeps(
 

@@ -104,40 +104,41 @@ sidebar <- dashboardSidebar(
 )
 
 controlbar <- dashboardControlbar(
-  createNavTabs(
+  tagList(
+  navTabs(
     tabID = "home-tab",
     icon = icon("home")),
-  createNavTabs(
+  navTabs(
     tabID = "settings-tab",
     icon = icon("gears")),
   paneldivs = {
     div( class = "tab-content" ,
     div(class = "tab-pane",id = "control-sidebar-settings-tab",
-     createSettingsTabPanel(
-      createFormPanel("Report Panel Usage","some Information about this general setting option"),
-      createFormPanel("Allow mail redirect","Other sets of options are available"),
-      createFormPanel("Expose author name in posts","Allow the user to show his name in blog posts"),
+     settingsTabPanel(
+      formPanel("Report Panel Usage","some Information about this general setting option"),
+      formPanel("Allow mail redirect","Other sets of options are available"),
+      formPanel("Expose author name in posts","Allow the user to show his name in blog posts"),
         panelHeading =  "General Settings7"
                            ),
-    createSettingsTabPanel(
-      createFormPanel("Show me as Online",""),
-      createFormPanel("Turn off Notifications",""),
-      createFormPanel("Delete Chat History","",icon = icon("trash")),
+    settingsTabPanel(
+      formPanel("Show me as Online",""),
+      formPanel("Turn off Notifications",""),
+      formPanel("Delete Chat History","",icon = icon("trash")),
           panelHeading =  "Chat settings")),
-    createHomeTabPanel(
-      createListItems(Header = "Custom Template Design",
-                      ProgressValue = 70,
-                      ProgressBarClass = "danger")
-     ,createListItems(Header = "Update Resume",
-                      ProgressValue = 95,
-                      ProgressBarClass = "success")
-     ,createListItems(Header = "Laravel Integration",
-                      ProgressValue = 50,
-                      ProgressBarClass = "warning")
+    homeTabPanel(
+      listItems(header = "Custom Template Design",
+                      progressValue = 70,
+                      progressBarClass = "danger")
+     ,listItems(header = "Update Resume",
+                      progressValue = 95,
+                      progressBarClass = "success")
+     ,listItems(header = "Laravel Integration",
+                      progressValue = 50,
+                      progressBarClass = "warning")
                      ,panelHeading = "Tasks Progress")
                                      )
                                      }
-)
+))
 
 body <- dashboardBody(tabItems(
   tabItem("dashboard",

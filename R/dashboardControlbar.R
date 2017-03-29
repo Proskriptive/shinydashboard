@@ -8,18 +8,11 @@
 #' @param paneldivs Divs for nav tabs.
 #'
 #' @export
-dashboardControlbar<-function(..., paneldivs = NULL)
-{
-  items <- list(...)
+dashboardControlbar <- function(...) {
 
-  tabDiv <- list(paneldivs)
-  lapply(tabDiv, tagAssert,type = "div")
-  lapply(items, tagAssert, type = "li")
-  tags$div(class = "Control-Bar Area",
-           tags$aside(class = "control-sidebar control-sidebar-dark",tags$ul(class = "nav nav-tabs nav-justified control-sidebar-tabs",items)
-                      ,tabDiv),
-           tags$div(class = "control-sidebar-bg")
-           )
+  tags$aside(class="control-sidebar control-sidebar-dark",
+    div(list(...))
+  )
 
 }
 
@@ -32,12 +25,12 @@ dashboardControlbar<-function(..., paneldivs = NULL)
 #' @param icon An icon tag, created by \code{\link[shiny]{icon}}.
 
 #' @export
-createNavTabs <- function(tabID ,icon = NULL)
-{
-  if(!is.null(icon)) tagAssert(icon,type = "i")
+createNavTabs <- function(tabID, icon = NULL) {
+  if (!is.null(icon))
+    tagAssert(icon, type = "i")
 
-     tags$li(tags$a(href = paste0("#control-sidebar-",tabID),`data-toggle` = "tab",icon)
-     )
+  tags$li(tags$a(href = paste0("#control-sidebar-", tabID),
+    `data-toggle` = "tab", icon))
 
 }
 
@@ -49,20 +42,17 @@ createNavTabs <- function(tabID ,icon = NULL)
 #' @param ... Form Items to Put in the Settings Tab Content Panel.
 #' @param panelHeading panel heading name
 #' @export
-createSettingsTabPanel <- function(...,panelHeading)
-{
+createSettingsTabPanel <- function(..., panelHeading) {
   formPanel <- list(...)
   lapply(formPanel, tagAssert, type = "div")
-  if( panelHeading == "General Settings")  {
-    tags$div(class = "tab-Setting",tags$form(
-      method = "post",tags$h3(class = "control-sidebar-heading",panelHeading),
-      formPanel
-    ))
-  }  else  {
-    tags$div(class = "tab-chatSetting",tags$form(
-      method = "post",tags$h3(class = "control-sidebar-heading",panelHeading),
-      formPanel
-    ))
+  if (panelHeading == "General Settings") {
+    tags$div(class = "tab-Setting", tags$form(method = "post",
+      tags$h3(class = "control-sidebar-heading", panelHeading),
+      formPanel))
+  } else {
+    tags$div(class = "tab-chatSetting", tags$form(method = "post",
+      tags$h3(class = "control-sidebar-heading", panelHeading),
+      formPanel))
   }
 
 }
@@ -75,11 +65,12 @@ createSettingsTabPanel <- function(...,panelHeading)
 #' @param panelHeading panel heading name
 #'
 #' @export
-createHomeTabPanel <- function(...,panelHeading)
-{
+createHomeTabPanel <- function(..., panelHeading) {
   ListItems <- list(...)
   lapply(ListItems, tagAssert, type = "li")
-  tags$div(class = "tab-pane active", id = "control-sidebar-home-tab",tags$ul(class = "control-sidebar-menu",tags$h3(class = "control-sidebar-heading",panelHeading),ListItems))
+  tags$div(class = "tab-pane active", id = "control-sidebar-home-tab",
+    tags$ul(class = "control-sidebar-menu", tags$h3(class = "control-sidebar-heading",
+      panelHeading), ListItems))
 }
 
 #' Creates the list items to be embeddded into the Home Tab Panel Content.
@@ -91,13 +82,16 @@ createHomeTabPanel <- function(...,panelHeading)
 #' @param ProgressBarClass This is used to set the Bootstrap Class for displaying the Progress Bar.
 #'
 #' @export
-createListItems <- function(Header,ProgressValue,ProgressBarClass)
-   {
-      if(ProgressBarClass %in% validStatuses)   {
-        tags$li(a(href = "javascript:void(0)",tags$h4(class = "control-sidebar-subheading",Header,tags$span(class = paste0("label label-",ProgressBarClass," pull-right"),ProgressValue)),
-                  tags$div(class = "progress progress-xxs",tags$div(class = paste0("progress-bar progress-bar-",ProgressBarClass),style = paste0("width:",ProgressValue,"%")))))
-      }
-   }
+createListItems <- function(Header, ProgressValue, ProgressBarClass) {
+  if (ProgressBarClass %in% validStatuses) {
+    tags$li(a(href = "javascript:void(0)", tags$h4(class = "control-sidebar-subheading",
+      Header, tags$span(class = paste0("label label-",
+        ProgressBarClass, " pull-right"), ProgressValue)),
+      tags$div(class = "progress progress-xxs", tags$div(class = paste0("progress-bar progress-bar-",
+        ProgressBarClass), style = paste0("width:", ProgressValue,
+        "%")))))
+  }
+}
 
 
 
@@ -110,15 +104,16 @@ createListItems <- function(Header,ProgressValue,ProgressBarClass)
 #' @param icon This will append icon to the Settings Element.
 #'
 #' @export
-formPanel <- function(Header,Description,icon = NULL)
-  {
-     if(!is.null(icon))   {
-       tagAssert(icon, type = "i")
-       tags$div(class = "form-group",tags$label(class = "control-sidebar-subheading", Header,a(href = "javascript:void(0)", class = "text-red pull-right",icon)) )
+formPanel <- function(Header, Description, icon = NULL) {
+  if (!is.null(icon)) {
+    tagAssert(icon, type = "i")
+    tags$div(class = "form-group", tags$label(class = "control-sidebar-subheading",
+      Header, a(href = "javascript:void(0)", class = "text-red pull-right",
+        icon)))
 
-     }  else {
-      tags$div(class = "form-group",tags$label(class = "control-sidebar-subheading", Header,customCheckboxInput()),
-               tags$p(Description))
-    }
-
+  } else {
+    tags$div(class = "form-group", tags$label(class = "control-sidebar-subheading",
+      Header, customCheckboxInput()), tags$p(Description))
   }
+
+}
