@@ -470,11 +470,11 @@ sidebarFooter <- function(...,height=NULL, color=NULL,backgroundColor=NULL) {
   if(!is.null(backgroundColor)){
     validateColor(backgroundColor)
   }
-  style <- paste0( "position:absolute;bottom:0; ",
+  style <- paste0( "position:absolute;bottom:0;width:100%; ",
                    ifelse(is.null(height),"",paste0("height:",validateCssUnit(height),";"))  , # Height of the footer
-                   ifelse(is.null(color),"",paste0("","color:",color,";"))  , # Height of the footer
+                   ifelse(is.null(color),"",paste0(";","color:",color,";"))  , # Height of the footer
                    "  padding: 10px;" ,
-                   ifelse(is.null(backgroundColor),"", paste0("background-color:", backgroundColor," ;") ),
+                   ifelse(is.null(backgroundColor),"background-color:white;", paste0("background-color:", backgroundColor," ;") ),
                    "  z-index: 1000;")
   tags$footer(...,class = "sidebar-footer",style=style)
 

@@ -8,11 +8,18 @@
 #' @param paneldivs Divs for nav tabs.
 #'
 #' @export
-dashboardControlbar <- function(...) {
+dashboardControlbar <- function(..., paneldivs = NULL) {
 
-  tags$aside(class="control-sidebar control-sidebar-dark",
-    div(list(...))
-  )
+  items <- list(...)
+  tabdiv <- list(paneldivs)
+  lapply(tabdiv, tagAssert, type = "div")
+  lapply(items, tagAssert, type = "li")
+
+  tagList(
+    tags$aside(class="control-sidebar control-sidebar-dark",
+                     tags$ul(class = "nav nav-tabs nav-justified control-sidebar-tabs", items),
+               tabdiv  ),
+    tags$div(class = "control-sidebar-bg"))
 
 }
 

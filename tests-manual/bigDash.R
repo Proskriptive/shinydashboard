@@ -3,7 +3,11 @@
 library(shiny)
 library(shinydashboard)
 library(dygraphs)
-
+library(xts)
+library(Widgets)
+library(metricsgraphics)
+library(highcharter)
+library(magrittr)
 
 header <- dashboardHeader(
   title = "Dashboard Demo",
@@ -89,8 +93,8 @@ sidebar <- dashboardSidebar(
     menuItem(
       "Charts",
       icon = icon("bar-chart-o"),
-      menuSubItem("Sub-item 1", tabName = "subitem1"),
-      menuSubItem("Sub-item 2", tabName = "subitem2")
+      menuSubItem("Dygraph Plot", tabName = "dygraph"),
+      menuSubItem("Multi-line Chart", tabName = "multilinechart")
     ),
     menuItem(
      "Tables",
@@ -99,26 +103,26 @@ sidebar <- dashboardSidebar(
     )
   ),
   sidebarMenuOutput("menu"),
-  sidebarFooter("Test Footer",img(src="img/Proskriptive-logo.png",width=100))
+  sidebarFooter("Test Footer",img(src="img/Proskriptive-logo.png",width=100),color = "black")
 
 )
 
 controlbar <- dashboardControlbar(
-  tagList(
+
   navTabs(
     tabID = "home-tab",
     icon = icon("home")),
   navTabs(
     tabID = "settings-tab",
     icon = icon("gears")),
-  paneldivs = {
+  paneldivs =  {
     div( class = "tab-content" ,
     div(class = "tab-pane",id = "control-sidebar-settings-tab",
      settingsTabPanel(
       formPanel("Report Panel Usage","some Information about this general setting option"),
       formPanel("Allow mail redirect","Other sets of options are available"),
       formPanel("Expose author name in posts","Allow the user to show his name in blog posts"),
-        panelHeading =  "General Settings7"
+        panelHeading =  "General Settings"
                            ),
     settingsTabPanel(
       formPanel("Show me as Online",""),
@@ -138,7 +142,31 @@ controlbar <- dashboardControlbar(
                      ,panelHeading = "Tasks Progress")
                                      )
                                      }
-))
+)
+
+datum <-  data.frame(Date = c("12-12-2012", "13-12-2012", "14-12-2012", "15-12-2012", "16-12-2012",
+                              "17-12-2012"), MktCap = c(110, 120, 130, 150 ,200, 180), PE = c(18, 18, 17, 18.5,
+                                                                                         19, 19))
+date <-  as.Date(as.character(datum$Date), "%d-%m-%Y")
+mktCap <- as.numeric(datum$MktCap)
+mcData <- xts(mktCap, order.by = date)
+
+plotdata <- function() {
+  winners <- data.frame(year=1966:1971, mensec=c(8231, 8145, 8537, 8029, 7830, 8325), womensec=c(12100, 12437, 12600, 12166, 11107, 11310))
+  men <- ts(winners$mensec, frequency = 1, start=winners$year[1])
+  women <- ts(winners$womensec, frequency = 1, start=winners$year[1])
+  both <- cbind(men=as.xts(men), women=as.xts(women))
+  return(both)
+}
+hseriesData <- data.frame( months = c( "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
+                           london = c(4.5,3.4,6.7,7.8,4.4,12.3,9.7,12.5,6.6,9.2,11.1,4.8),
+                           berlin = c(-0.9,0.6,3.5,8.4,13.5,17.0,18.6,17.9,14.3,9.0,3.9,1.0))
+chartData_multiline <- data.frame(dates = as.Date(1:7, origin=Sys.Date()),
+                                  A = c(5,4,6,3,2,7,1),
+                                  B = c(7,1,4,6,0,2,3),
+                                  C = c(2,0,3,9,5,7,4), stringsAsFactors = FALSE)
+
+
 
 body <- dashboardBody(tabItems(
   tabItem("dashboard",
@@ -147,10 +175,19 @@ body <- dashboardBody(tabItems(
           ))),
   tabItem("widgets",
           "Widgets tab content"),
-  tabItem("subitem1",
-          "Sub-item 1 tab content"),
-  tabItem("subitem2",
-          "Sub-item 2 tab content"),
+  tabItem("dygraph",
+          box(
+            controlChartDygraph(tsData = plotdata(), headerText = "Marathon timings Men and Women",
+                                enableDyrange = TRUE, enableDyhighlight = TRUE), width = 8, title = "ChartsJS > Dygraph"
+          )),
+  tabItem("multilinechart",
+          box(
+            multilineChart(timeSlots = chartData_multiline$dates, multilinePlotingdata = chartData_multiline),
+            width = 12,
+            status = "primary",
+            title = "ChartJS > Multi-Line Chart"
+          )
+          ),
   tabItem("Tables",
           box(
             title = " Sample Table",width = NULL,status = "primary",
@@ -298,6 +335,9 @@ body <- dashboardBody(tabItems(
     box(kpi_table_box("kpi_table_box"))
 
     ,box(kpi_metric_box("kpi_metric_box"))
+  ),
+  fluidRow(
+    box(highChart(title = "Temperature for some cities", theme = "economist", seriesData = hseriesData, seriesCategories = hseriesData$months))
   )
 
 )
@@ -305,6 +345,7 @@ body <- dashboardBody(tabItems(
 server <- function(input, output) {
   set.seed(122)
   histdata <- rnorm(500)
+
 
   output$menu <- renderMenu({
     sidebarMenu(menuItem("Menu item", icon = icon("calendar")))
