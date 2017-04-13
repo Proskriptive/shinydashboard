@@ -2,7 +2,7 @@
 % Please edit documentation in R/box_extensions.R
 \name{kpi_metric_box}
 \alias{kpi_metric_box}
-\title{Create a Matrix Box}
+\title{Create a Metrics Box}
 \usage{
 kpi_metric_box(..., id = NULL, title = NULL, footer = NULL,
   status = NULL, info, solidHeader = FALSE, background = NULL,
@@ -48,5 +48,5 @@ kpi_metric_box(..., id = NULL, title = NULL, footer = NULL,
  </div>
 }
 \description{
-Create a Matrix Box
+Create a Metrics Box
 }
