@@ -4,10 +4,10 @@ library(shiny)
 library(shinydashboard)
 library(dygraphs)
 library(xts)
-library(Widgets)
 library(metricsgraphics)
 library(highcharter)
 library(magrittr)
+library(Widgets)
 
 header <- dashboardHeader(
   title = "Dashboard Demo",
@@ -115,6 +115,7 @@ controlbar <- dashboardControlbar(
   navTabs(
     tabID = "settings-tab",
     icon = icon("gears")),
+
   paneldivs =  {
     div( class = "tab-content" ,
     div(class = "tab-pane",id = "control-sidebar-settings-tab",
@@ -143,7 +144,7 @@ controlbar <- dashboardControlbar(
                                      )
                                      }
 )
-
+#Sample data for Plotting Dygraphs,Highchart and multiline Charts in the Dashboard
 datum <-  data.frame(Date = c("12-12-2012", "13-12-2012", "14-12-2012", "15-12-2012", "16-12-2012",
                               "17-12-2012"), MktCap = c(110, 120, 130, 150 ,200, 180), PE = c(18, 18, 17, 18.5,
                                                                                          19, 19))
@@ -164,7 +165,9 @@ hseriesData <- data.frame( months = c( "Jan", "Feb", "Mar", "Apr", "May", "Jun",
 chartData_multiline <- data.frame(dates = as.Date(1:7, origin=Sys.Date()),
                                   A = c(5,4,6,3,2,7,1),
                                   B = c(7,1,4,6,0,2,3),
-                                  C = c(2,0,3,9,5,7,4), stringsAsFactors = FALSE)
+                                  C = c(2,0,3,9,5,7,4),
+                                  D = c(2,10,13,19,5,2,4),
+                                  E = c(5,1,3,0,5,7,1),stringsAsFactors = FALSE)
 
 
 
@@ -178,21 +181,17 @@ body <- dashboardBody(tabItems(
   tabItem("dygraph",
           box(
             controlChartDygraph(tsData = plotdata(), headerText = "Marathon timings Men and Women",
-                                enableDyrange = TRUE, enableDyhighlight = TRUE), width = 8, title = "ChartsJS > Dygraph"
+                                enableDyrange = TRUE, enableDyhighlight = TRUE, legendalignment = "left", yaxisHeader = "Timings" ), width = 8, title = "ChartsJS > Dygraph"
           )),
   tabItem("multilinechart",
           box(
-            multilineChart(timeSlots = chartData_multiline$dates, multilinePlotingdata = chartData_multiline),
+             multilineChart(multilinedata = chartData_multiline),
             width = 12,
             status = "primary",
             title = "ChartJS > Multi-Line Chart"
           )
-          ),
-  tabItem("Tables",
-          box(
-            title = " Sample Table",width = NULL,status = "primary",
-            div(style = 'overflow-x:scroll',tableOutput('table'))
-          ))),
+          )
+  ),
 
   # Boxes need to be put in a row (or column)
   fluidRow(box(plotOutput("plot1", height = 250)),
@@ -207,7 +206,8 @@ body <- dashboardBody(tabItems(
       "Orders",
       uiOutput("orderNum2"),
       "Subtitle",
-      icon = icon("credit-card")
+      icon = icon("credit-card"),
+      fill = TRUE
     ),
     infoBox(
       "Approval Rating",
@@ -220,7 +220,8 @@ body <- dashboardBody(tabItems(
       "Progress",
       uiOutput("progress2"),
       icon = icon("users"),
-      color = "purple"
+      color = "purple",
+      fill = TRUE
     )
   ),
 
@@ -332,9 +333,15 @@ body <- dashboardBody(tabItems(
     )
   ),
   fluidRow(
-    box(kpi_table_box("kpi_table_box"))
+     kpi_metric_box(id = "kpibox" , "The Body of the Box", title = "Expandable", status = "info", collapsed = TRUE, width = 4)
 
-    ,box(kpi_metric_box("kpi_metric_box"))
+    ,kpi_metric_box(id = "kpibox" , "The Body of the Box", title = "Collapsable", status = "warning", collapsed = FALSE, width = 4)
+    ,removable_kpi_metric_box("The Body of the Box", title = "Removable", status = "primary")
+  ),
+  fluidRow(
+    box(measure_box_tabular_UI("kpi_measure_box",title = "KPI Measure Box")),
+    box(removable_kpi_metric_box("The Body of the Box", title = "Removable", status = "success")
+        )
   ),
   fluidRow(
     box(highChart(title = "Temperature for some cities", theme = "economist", seriesData = hseriesData, seriesCategories = hseriesData$months))
@@ -416,10 +423,6 @@ server <- function(input, output) {
     input$tabset1
   })
 
-
-  output$table <- renderTable({
-    test.table
-  })
 }
 
 ui <- dashboardPage(header,
