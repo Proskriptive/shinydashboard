@@ -8,6 +8,7 @@ library(metricsgraphics)
 library(highcharter)
 library(magrittr)
 library(Widgets)
+library(DT)
 
 header <- dashboardHeader(
   title = "Dashboard Demo",
@@ -68,6 +69,9 @@ isDisplayControlbar = TRUE,
   )
 )
 sidebar <- dashboardSidebar(
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
+  ),
   sidebarUserPanel(
     "User Name",
     subtitle = a(href = "#", icon("circle", class = "text-success"), "Online"),
@@ -103,7 +107,8 @@ sidebar <- dashboardSidebar(
     )
   ),
   sidebarMenuOutput("menu"),
-  sidebarFooter("Test Footer",img(src="img/Proskriptive-logo.png",width=100),color = "black")
+  sidebarFooter("Test Footer",img(src="img/Proskriptive-logo.png",width=100),color = "black"),
+  style.Version = "style1"
 
 )
 
@@ -153,23 +158,21 @@ mktCap <- as.numeric(datum$MktCap)
 mcData <- xts(mktCap, order.by = date)
 
 plotdata <- function() {
-  winners <- data.frame(year=1966:1971, mensec=c(8231, 8145, 8537, 8029, 7830, 8325), womensec=c(12100, 12437, 12600, 12166, 11107, 11310))
-  men <- ts(winners$mensec, frequency = 1, start=winners$year[1])
-  women <- ts(winners$womensec, frequency = 1, start=winners$year[1])
-  both <- cbind(men=as.xts(men), women=as.xts(women))
+  winners <- data.frame(year = 1966:1971, mensec = c(8231, 8145, 8537, 8029, 7830, 8325), womensec = c(12100, 12437, 12600, 12166, 11107, 11310))
+  men <- ts(winners$mensec, frequency = 1, start = winners$year[1])
+  women <- ts(winners$womensec, frequency = 1, start = winners$year[1])
+  both <- cbind(men = as.xts(men), women = as.xts(women))
   return(both)
 }
-hseriesData <- data.frame( months = c( "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
-                           london = c(4.5,3.4,6.7,7.8,4.4,12.3,9.7,12.5,6.6,9.2,11.1,4.8),
-                           berlin = c(-0.9,0.6,3.5,8.4,13.5,17.0,18.6,17.9,14.3,9.0,3.9,1.0))
+hseriesData <- data.frame(months = c( "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
+                          london = c(4.5,3.4,6.7,7.8,4.4,12.3,9.7,12.5,6.6,9.2,11.1,4.8),
+                          berlin = c(-0.9,0.6,3.5,8.4,13.5,17.0,18.6,17.9,14.3,9.0,3.9,1.0))
 chartData_multiline <- data.frame(dates = as.Date(1:7, origin=Sys.Date()),
                                   A = c(5,4,6,3,2,7,1),
                                   B = c(7,1,4,6,0,2,3),
                                   C = c(2,0,3,9,5,7,4),
                                   D = c(2,10,13,19,5,2,4),
-                                  E = c(5,1,3,0,5,7,1),stringsAsFactors = FALSE)
-
-
+                                  E = c(5,1,3,0,5,7,1), stringsAsFactors = FALSE)
 
 body <- dashboardBody(tabItems(
   tabItem("dashboard",
@@ -185,7 +188,7 @@ body <- dashboardBody(tabItems(
           )),
   tabItem("multilinechart",
           box(
-             multilineChart(multilinedata = chartData_multiline),
+            multilineChart(multilinedata = chartData_multiline),
             width = 12,
             status = "primary",
             title = "ChartJS > Multi-Line Chart"
@@ -345,7 +348,11 @@ body <- dashboardBody(tabItems(
   ),
   fluidRow(
     box(highChart(title = "Temperature for some cities", theme = "economist", seriesData = hseriesData, seriesCategories = hseriesData$months))
+  ),
+  fluidRow(
+    DT::dataTableOutput("table1"), width = 8
   )
+
 
 )
 
@@ -423,11 +430,18 @@ server <- function(input, output) {
     input$tabset1
   })
 
+
+
+  output$table1 <-  DT::renderDataTable({
+
+    datatable(  read.table("I:\\official\\Projects\\Proscriptive_shinydashboard\\tests-manual\\www\\table.txt", header = T))
+  })
+
 }
 
 ui <- dashboardPage(header,
                     sidebar,
-                    body, controlbar)
+                    body, controlbar, skin = "purple")
 
 
 
