@@ -2,10 +2,17 @@
 
 library(shiny)
 library(shinydashboard)
+library(dygraphs)
+library(xts)
+library(metricsgraphics)
+library(highcharter)
+library(magrittr)
+library(Widgets)
+library(DT)
 
 header <- dashboardHeader(
   title = "Dashboard Demo",
-
+isDisplayControlbar = TRUE,
   # Dropdown menu for messages
   dropdownMenu(
     type = "messages",
@@ -62,11 +69,14 @@ header <- dashboardHeader(
   )
 )
 sidebar <- dashboardSidebar(
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
+  ),
   sidebarUserPanel(
     "User Name",
     subtitle = a(href = "#", icon("circle", class = "text-success"), "Online"),
     # Image file should be in www/ subdir
-    image = paste0(getwd(),"/www/img/userimage.png")
+    image =paste0("shinydashboard", "-", as.character(utils::packageVersion("shinydashboard")), "/img/guang.jpg")
   ),
   sidebarSearchForm(label = "Enter a number", "searchText", "searchButton"),
   sidebarMenu(
@@ -87,8 +97,8 @@ sidebar <- dashboardSidebar(
     menuItem(
       "Charts",
       icon = icon("bar-chart-o"),
-      menuSubItem("Sub-item 1", tabName = "subitem1"),
-      menuSubItem("Sub-item 2", tabName = "subitem2")
+      menuSubItem("Dygraph Plot", tabName = "dygraph"),
+      menuSubItem("Multi-line Chart", tabName = "multilinechart")
     ),
     menuItem(
      "Tables",
@@ -96,8 +106,73 @@ sidebar <- dashboardSidebar(
      tabName = "Tables"
     )
   ),
-  sidebarMenuOutput("menu")
+  sidebarMenuOutput("menu"),
+  sidebarFooter("Test Footer",img(src="img/Proskriptive-logo.png",width=100),color = "black"),
+  style.Version = "style1"
+
 )
+
+controlbar <- dashboardControlbar(
+
+  navTabs(
+    tabID = "home-tab",
+    icon = icon("home")),
+  navTabs(
+    tabID = "settings-tab",
+    icon = icon("gears")),
+
+  paneldivs =  {
+    div( class = "tab-content" ,
+    div(class = "tab-pane",id = "control-sidebar-settings-tab",
+     settingsTabPanel(
+      formPanel("Report Panel Usage","some Information about this general setting option"),
+      formPanel("Allow mail redirect","Other sets of options are available"),
+      formPanel("Expose author name in posts","Allow the user to show his name in blog posts"),
+        panelHeading =  "General Settings"
+                           ),
+    settingsTabPanel(
+      formPanel("Show me as Online",""),
+      formPanel("Turn off Notifications",""),
+      formPanel("Delete Chat History","",icon = icon("trash")),
+          panelHeading =  "Chat settings")),
+    homeTabPanel(
+      listItems(header = "Custom Template Design",
+                      progressValue = 70,
+                      progressBarClass = "danger")
+     ,listItems(header = "Update Resume",
+                      progressValue = 95,
+                      progressBarClass = "success")
+     ,listItems(header = "Laravel Integration",
+                      progressValue = 50,
+                      progressBarClass = "warning")
+                     ,panelHeading = "Tasks Progress")
+                                     )
+                                     }
+)
+#Sample data for Plotting Dygraphs,Highchart and multiline Charts in the Dashboard
+datum <-  data.frame(Date = c("12-12-2012", "13-12-2012", "14-12-2012", "15-12-2012", "16-12-2012",
+                              "17-12-2012"), MktCap = c(110, 120, 130, 150 ,200, 180), PE = c(18, 18, 17, 18.5,
+                                                                                         19, 19))
+date <-  as.Date(as.character(datum$Date), "%d-%m-%Y")
+mktCap <- as.numeric(datum$MktCap)
+mcData <- xts(mktCap, order.by = date)
+
+plotdata <- function() {
+  winners <- data.frame(year = 1966:1971, mensec = c(8231, 8145, 8537, 8029, 7830, 8325), womensec = c(12100, 12437, 12600, 12166, 11107, 11310))
+  men <- ts(winners$mensec, frequency = 1, start = winners$year[1])
+  women <- ts(winners$womensec, frequency = 1, start = winners$year[1])
+  both <- cbind(men = as.xts(men), women = as.xts(women))
+  return(both)
+}
+hseriesData <- data.frame(months = c( "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
+                          london = c(4.5,3.4,6.7,7.8,4.4,12.3,9.7,12.5,6.6,9.2,11.1,4.8),
+                          berlin = c(-0.9,0.6,3.5,8.4,13.5,17.0,18.6,17.9,14.3,9.0,3.9,1.0))
+chartData_multiline <- data.frame(dates = as.Date(1:7, origin=Sys.Date()),
+                                  A = c(5,4,6,3,2,7,1),
+                                  B = c(7,1,4,6,0,2,3),
+                                  C = c(2,0,3,9,5,7,4),
+                                  D = c(2,10,13,19,5,2,4),
+                                  E = c(5,1,3,0,5,7,1), stringsAsFactors = FALSE)
 
 body <- dashboardBody(tabItems(
   tabItem("dashboard",
@@ -106,15 +181,20 @@ body <- dashboardBody(tabItems(
           ))),
   tabItem("widgets",
           "Widgets tab content"),
-  tabItem("subitem1",
-          "Sub-item 1 tab content"),
-  tabItem("subitem2",
-          "Sub-item 2 tab content"),
-  tabItem("Tables",
+  tabItem("dygraph",
           box(
-            title = " Sample Table",width = NULL,status = "primary",
-            div(style = 'overflow-x:scroll',tableOutput('table'))
-          ))),
+            controlChartDygraph(tsData = plotdata(), headerText = "Marathon timings Men and Women",
+                                enableDyrange = TRUE, enableDyhighlight = TRUE, legendalignment = "left", yaxisHeader = "Timings" ), width = 8, title = "ChartsJS > Dygraph"
+          )),
+  tabItem("multilinechart",
+          box(
+            multilineChart(multilinedata = chartData_multiline),
+            width = 12,
+            status = "primary",
+            title = "ChartJS > Multi-Line Chart"
+          )
+          )
+  ),
 
   # Boxes need to be put in a row (or column)
   fluidRow(box(plotOutput("plot1", height = 250)),
@@ -129,7 +209,8 @@ body <- dashboardBody(tabItems(
       "Orders",
       uiOutput("orderNum2"),
       "Subtitle",
-      icon = icon("credit-card")
+      icon = icon("credit-card"),
+      fill = TRUE
     ),
     infoBox(
       "Approval Rating",
@@ -142,7 +223,8 @@ body <- dashboardBody(tabItems(
       "Progress",
       uiOutput("progress2"),
       icon = icon("users"),
-      color = "purple"
+      color = "purple",
+      fill = TRUE
     )
   ),
 
@@ -254,16 +336,30 @@ body <- dashboardBody(tabItems(
     )
   ),
   fluidRow(
-    box(kpi_table_box("kpi_table_box"))
+     kpi_metric_box(id = "kpibox" , "The Body of the Box", title = "Expandable", status = "info", collapsed = TRUE, width = 4)
 
-    ,box(kpi_metric_box("kpi_metric_box"))
+    ,kpi_metric_box(id = "kpibox" , "The Body of the Box", title = "Collapsable", status = "warning", collapsed = FALSE, width = 4)
+    ,removable_kpi_metric_box("The Body of the Box", title = "Removable", status = "primary")
+  ),
+  fluidRow(
+    box(measure_box_tabular_UI("kpi_measure_box",title = "KPI Measure Box")),
+    box(removable_kpi_metric_box("The Body of the Box", title = "Removable", status = "success")
+        )
+  ),
+  fluidRow(
+    box(highChart(title = "Temperature for some cities", theme = "economist", seriesData = hseriesData, seriesCategories = hseriesData$months))
+  ),
+  fluidRow(
+    DT::dataTableOutput("table1"), width = 8
   )
+
 
 )
 
 server <- function(input, output) {
   set.seed(122)
   histdata <- rnorm(500)
+
 
   output$menu <- renderMenu({
     sidebarMenu(menuItem("Menu item", icon = icon("calendar")))
@@ -272,6 +368,22 @@ server <- function(input, output) {
   output$plot1 <- renderPlot({
     data <- histdata[seq_len(input$slider)]
     hist(data)
+  })
+  predicted <- reactive({
+    hw <- HoltWinters(ldeaths)
+    predict(hw, n.ahead = input$months,
+            prediction.interval = TRUE,
+            level = as.numeric(input$interval))
+  })
+  output$point <- renderText({
+    paste0('X = ', strftime(req(input$dygraph_click$x_closest_point), "%d %b %Y"),
+           '; Y = ', req(input$dygraph_click$y_closest_point))
+  })
+
+
+  output$plot2 <- renderDygraph({
+    lungDeaths <- cbind(ldeaths, mdeaths, fdeaths)
+    dyRangeSelector(dygraph(lungDeaths, main = "Deaths from Lung Disease (UK)"), dateWindow = c("1974-01-01", "1980-01-01"))
   })
 
   output$orderNum <- renderText({
@@ -317,17 +429,20 @@ server <- function(input, output) {
   output$tabset1Selected <- renderText({
     input$tabset1
   })
-  test.table <- data.frame(lapply(1:8, function(x) {1:10}))
-  names(test.table) <- paste0('This_is_a_very_long_name_', 1:8)
 
-  output$table <- renderTable({
-    test.table
+
+
+  output$table1 <-  DT::renderDataTable({
+
+    datatable(  read.table("I:\\official\\Projects\\Proscriptive_shinydashboard\\tests-manual\\www\\table.txt", header = T))
   })
+
 }
 
 ui <- dashboardPage(header,
                     sidebar,
-                    body, footer = dashboardFooter(),controlbar = dashboardControlbar()
-)
+                    body, controlbar, skin = "purple")
+
+
 
 shinyApp(ui, server)

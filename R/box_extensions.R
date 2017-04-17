@@ -50,7 +50,7 @@ validateColor <- function(color) {
 #' @keywords internal
 validColors <- c("red", "yellow", "aqua", "blue", "light-blue", "green",
                  "navy", "teal", "olive", "lime", "orange", "fuchsia",
-                 "purple", "maroon", "black")
+                 "purple", "maroon", "black", "white")
 
 
 # Returns TRUE if a status is valid; throws error otherwise.
@@ -292,7 +292,7 @@ kpi_trend_box <-
   }
 
 
-#' Create a Matrix Box
+#' Create a Metrics Box
 #'
 #' @param id is the unique id of html elemnt.
 #' @param title is the title of the Table box.
@@ -334,6 +334,8 @@ kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status =
   }
   if (collapsible && collapsed) {
     boxClass <- paste(boxClass, "collapsed-box")
+    titleTag <- actionLink(id,h3(class = "box-title", title  #, #style="text-decoration: underline;"
+    ))
   }
   if (!is.null(background)) {
     validateColor(background)
@@ -350,6 +352,8 @@ kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status =
     titleTag <- actionLink(id,h3(class = "box-title", title  #, #style="text-decoration: underline;"
                                  ))
   }
+
+
 
   collapseTag <- NULL
   if (collapsible) {
@@ -390,11 +394,109 @@ kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status =
       div(class = boxClass,
           style = if (!is.null(style)) style,
           headerTag,
+          div(class = "box-body", style = "margin-left:20px;" , fluidRow(...)),
+          if (!is.null(footer)) div(class = "box-footer", footer)
+      )
+  )
+}
+
+#' Create a Removable Kpi Metrics Box
+#'
+#' @param id is the unique id of html elemnt.
+#' @param title is the title of the Table box.
+#' @param footer is the footer of the table box.
+#' @param Status is the status of the box.
+#' @param Info is the information about the matrix box.
+#' @param solidheader is the header of the table box.
+#' @param background is the backgroundcolor of box.
+#' @param width id the width of the box.
+#' @param height is the heigth of the box.
+#' @param removable is the box should be removable.
+#' @export
+ removable_kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status = success,info,
+                           solidHeader = FALSE, background = NULL, width = 4,
+                           height = NULL, removable = TRUE) {
+
+  boxClass <- "box"
+  if (solidHeader || !is.null(background)) {
+    boxClass <- paste(boxClass, "box-solid")
+  }
+  if (!is.null(status)) {
+    validateStatus(status)
+    boxClass <- paste0(boxClass, " box-", status)
+  }
+  if (removable) {
+    boxClass <- paste(boxClass, "collapsed-box")
+    titleTag <- actionLink(id,h3(class = "box-title", title  #, #style="text-decoration: underline;"
+    ))
+  }
+  if (!is.null(background)) {
+    validateColor(background)
+    boxClass <- paste0(boxClass, " bg-", background)
+  }
+
+  style <- NULL
+  if (!is.null(height)) {
+    style <- paste0("height: ", validateCssUnit(height))
+  }
+
+  titleTag <- NULL
+  if (!is.null(title)) {
+    titleTag <- actionLink(id,h3(class = "box-title", title  #, #style="text-decoration: underline;"
+    ))
+  }
+
+
+
+  removeTag <- NULL
+  if (removable) {
+    buttonStatus <- status %OR% "default"
+
+    removeIcon <- "times"
+
+    removeTag <-
+      tags$button(class = paste0("btn btn-box-tool"),
+                  `data-widget` = "remove",
+                  shiny::icon(removeIcon)
+
+      )
+  }
+
+  infoTag <- NULL
+  if (!missing(info)) {
+    buttonStatus <- status %OR% "default"
+
+    infoIcon <- "info-circle"
+
+    infoTag <-
+      tags$button(class = paste0("btn btn-default fa-2x"),
+                  shiny::icon(infoIcon)
+
+      )
+  }
+  headerTag <- NULL
+  if (!is.null(titleTag) || !is.null(removeTag) || !is.null(infoTag)) {
+    headerTag <- div(class = "box-header",
+                     titleTag,
+                     div(class = "box-tools pull-right",infoTag ,
+                         removeTag))
+
+  }
+
+  div(class = if (!is.null(width)) paste0("col-sm-", width),
+      div(class = boxClass,
+          style = if (!is.null(style)) style,
+          headerTag,
           div(class = "box-body", fluidRow(...)),
           if (!is.null(footer)) div(class = "box-footer", footer)
       )
   )
 }
+
+
+
+
+
 
 
 #' Create a table Box
@@ -523,6 +625,9 @@ panel_box <- function(..., id = NULL, title = NULL, metric_list = NULL,footer = 
   if (!is.null(title)) {
     titleTag <- h3(class = "box-title", title)
   }
+  if(collapsed) {
+    titleTag <- h3(class = "box-title", "Expandable")
+  }
 
   collapseTag <- NULL
   if (collapsible) {
@@ -536,6 +641,7 @@ panel_box <- function(..., id = NULL, title = NULL, metric_list = NULL,footer = 
                   shiny::icon(collapseIcon)
 
       )
+
   }
 
   infoTag <- NULL
@@ -550,7 +656,7 @@ panel_box <- function(..., id = NULL, title = NULL, metric_list = NULL,footer = 
 
       )
   }
-  headerPanel() <- NULL
+  headerTag <- NULL
   if (!is.null(titleTag) || !is.null(collapseTag) || !is.null(infoTag)) {
     headerTag <- div(class = "box-header",
                      titleTag,

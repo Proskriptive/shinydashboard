@@ -1,3 +1,31 @@
+# Returns TRUE if a color is a valid style defined in AdminLTE, throws error
+# otherwise.
+validateStyle <- function(style) {
+  if(style %in% validStyles) {
+    return(TRUE)
+  }
+  stop("Invalid style: ", style, ". Valid styles are: ",
+       paste(validStyles, collapse = ", "), ".")
+}
+
+#' Valid Sidebar-Styles
+#'
+#' These are valid styles configurable on dashboard sidebar. Valid styles are
+#' listed below.
+#'
+#'  \itemize{
+#'   \item \code{style1}
+#'   \item \code{style2}
+#'   \item \code{style3}
+#' }
+#'
+#' @usage NULL
+#' @format NULL
+#'
+#' @keywords internal
+validStyles <- c("style1","style2","style3")
+
+
 #' Create a dashboard sidebar.
 #'
 #' A dashboard sidebar typically contains a \code{\link{sidebarMenu}}, although
@@ -9,6 +37,8 @@
 #'   specifies the width in pixels, or a string that specifies the width in CSS
 #'   units.
 #' @param collapsed If \code{TRUE}, the sidebar will be collapsed on app startup.
+#' @param sidebar.bg It will contain the background color Property.
+#' @param style.Version It will apply one of the available styles for the sidebar.
 #'
 #' @seealso \code{\link{sidebarMenu}}
 #'
@@ -60,9 +90,12 @@
 #' )
 #' }
 #' @export
-dashboardSidebar <- function(..., disable = FALSE, width = NULL, collapsed = FALSE) {
+dashboardSidebar <- function(..., disable = FALSE, width = NULL, collapsed = FALSE, sidebar.bg = NULL, style.Version = "style1") {
   width <- validateCssUnit(width)
 
+  res <- try(col2rgb(sidebar.bg),silent=TRUE)
+  check <- !"try-error"%in%class(res)
+  validateStyle(style.Version)
   # Set up custom CSS for custom width
   custom_css <- NULL
   if (!is.null(width)) {
@@ -118,14 +151,15 @@ dashboardSidebar <- function(..., disable = FALSE, width = NULL, collapsed = FAL
   # class to the body (not to the sidebar). However, it makes sense for the
   # `collapsed` argument to belong in this function. So this information is
   # just passed through (also as a class) to the `dashboardPage()` function
-  tags$aside(class = paste("main-sidebar", if (collapsed) "start-collapsed"),
+  tags$aside(class = paste("main-sidebar", if (collapsed) "start-collapsed", style.Version), style = ifelse(check, paste0("background-color:",sidebar.bg),"background-color:black"),
     custom_css,
     tags$section(
-      class = "sidebar",
+      class = paste0(style.Version," sidebar"),
       `data-disable` = if (disable) 1 else NULL,
       list(...)
     )
   )
+
 }
 
 #' A panel displaying user information in a sidebar
@@ -213,6 +247,8 @@ sidebarSearchForm <- function(textId, buttonId, label = "Search...",
 #' Menu items (but not sub-items) also may have an optional badge. A badge is a
 #' colored oval containing text.
 #'
+#'A footer is enabled by \code{dashboardFooter}.  This allows logo's or text to be
+#'placed at the bottom of the sidebar.
 #' @param text Text to show for the menu item.
 #' @param id For \code{sidebarMenu}, if \code{id} is present, this id will be
 #'   used for a Shiny input value, and it will report which tab is selected. For
@@ -448,3 +484,61 @@ menuSubItem <- function(text, tabName = NULL, href = NULL, newtab = TRUE,
     )
   )
 }
+
+
+
+#' The footer for the Sidebar in the dashboard
+#'
+#' The footer typically contains info about the company or application
+#' #' is for the footer to contain dynamic message commnuncation.
+#' The footer is statically locate at the bottom of the sidebar
+#' @param height the height as an integer, pixel e.g. 250px, or a css symbol
+#' @param color the color of the text
+#' @param backgroundColor the color of the background
+#' @export
+sidebarFooter <- function(...,height=NULL, color=NULL,backgroundColor=NULL) {
+  if(!is.null(color)){
+    validateColor(color)
+  }
+  if(!is.null(backgroundColor)){
+    validateColor(backgroundColor)
+  }
+  style <- paste0( "position:absolute;bottom:0;width:100%; ",
+                   ifelse(is.null(height),"",paste0("height:",validateCssUnit(height),";"))  , # Height of the footer
+                   ifelse(is.null(color),"",paste0(";","color:",color,";"))  , # Height of the footer
+                   "  padding: 10px;" ,
+                   ifelse(is.null(backgroundColor),"background-color:white;", paste0("background-color:", backgroundColor," ;") ),
+                   "  z-index: 1000;")
+  tags$footer(...,class = "sidebar-footer",style=style)
+
+}
+
+
+#' Create a dynamic footer output for shinydashboard sidebar (client side)
+#'
+#' This can be used as a placeholder for dynamically-generated \code{\link{dashboardSidebarFooter}}.
+#'
+#' @param outputId Output variable name.
+#' @param tag A tag function, like \code{tags$li} or \code{tags$ul}.
+#'
+#' @seealso \code{\link{renderSideboardFooter}} for the corresponding server side function
+#'   and examples.
+#' @family footer outputs
+#' @export
+sidebarFooterOutput <- function(outputId) {
+  moduleOutput(outputId = outputId, tag = tags$footer)
+}
+
+
+
+
+#' Create dynamic sidebar footer (server side)
+#'
+#' @inheritParams shiny::renderUI
+#'
+#' @seealso \code{\link{footerSidebarOutput}} for the corresponding client side function
+#'   and examples.
+#' @family sidebar outputs
+#' @export
+
+renderSidebarFooter <- shiny::renderUI
