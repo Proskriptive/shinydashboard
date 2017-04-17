@@ -1,0 +1,18 @@
+.style1 .sidebar .sidebar-menu > li:hover > a,
+.style1 .sidebar .sidebar-menu > li.active > a {
+color : #ffffff;
+background : #99ccff;
+}
+
+
+.style2 .sidebar .sidebar-menu > li:hover > a,
+.style2 .sidebar .sidebar-menu > li.active > a {
+color : #ffffff;
+background : #4cdb6e;
+}
+.style3 .sidebar .sidebar-menu > li:hover > a,
+.style3 .sidebar .sidebar-menu > li.active > a {
+color : #ffffff;
+background : #d7e018;
+}
+
