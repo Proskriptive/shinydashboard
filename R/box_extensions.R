@@ -417,7 +417,7 @@ kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status =
       div(class = boxClass,
           style = if (!is.null(style)) style,
           headerTag,
-          div(class = "box-body", fluidRow(...)),
+          div(class = "box-body", ...),
           if (!is.null(footer)) div(class = "box-footer", footer)
       )
   )
@@ -510,7 +510,7 @@ kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status =
       div(class = boxClass,
           style = if (!is.null(style)) style,
           headerTag,
-          div(class = "box-body", fluidRow(...)),
+          div(class = "box-body", ...),
           if (!is.null(footer)) div(class = "box-footer", footer)
       )
   )
