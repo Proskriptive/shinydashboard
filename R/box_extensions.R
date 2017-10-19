@@ -305,6 +305,7 @@ kpi_trend_box <-
 #' @param height is the heigth of the box.
 #' @param collapsible is the box should be collapsibe.
 #' @param collapsed is the box is collapsed.
+#' @param expandable can this box be expanded in a modal fashion
 #' @return <div class="col-sm-6">
 #' <div class="box">
 #'  <div class="box-header">
@@ -322,7 +323,7 @@ kpi_trend_box <-
 #' @export
 kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status = NULL,info,
                                                                                 solidHeader = FALSE, background = NULL, width = 12,
-                                                                                height = NULL, collapsible = TRUE, collapsed = FALSE) {
+                                                                                height = NULL, collapsible = TRUE, collapsed = FALSE,expandable=TRUE) {
 
   boxClass <- "box"
   if (solidHeader || !is.null(background)) {
@@ -334,8 +335,6 @@ kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status =
   }
   if (collapsible && collapsed) {
     boxClass <- paste(boxClass, "collapsed-box")
-    titleTag <- actionLink(id,h3(class = "box-title", title  #, #style="text-decoration: underline;"
-    ))
   }
   if (!is.null(background)) {
     validateColor(background)
@@ -350,23 +349,47 @@ kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status =
   titleTag <- NULL
   if (!is.null(title)) {
     titleTag <- actionLink(id,h3(class = "box-title", title  #, #style="text-decoration: underline;"
-                                 ))
+    ))
   }
 
-
-
   collapseTag <- NULL
-  if (collapsible) {
+   if (collapsible) {
+
     buttonStatus <- status %OR% "default"
 
     collapseIcon <- if (collapsed) "plus" else "minus"
 
     collapseTag <-
-                       tags$button(class = paste0("btn btn-box-tool"),
-                                   `data-widget` = "collapse",
-                                   shiny::icon(collapseIcon)
+      tags$button(class = paste0("btn btn-box-tool"),
+                  `data-widget` = "collapse",
+                  shiny::icon(collapseIcon)
 
-    )
+      )
+  }
+
+  expandableTag <- NULL
+  if (expandable) {
+    buttonStatus <- status %OR% "default"
+
+    expandIcon <-   "expand"
+    expandableTag <- if (is.null(id)) {
+      tags$button(
+          class = paste0("btn btn-box-tool  fa-2x"),
+
+        shiny::icon(expandIcon)
+
+      )
+
+    } else {
+
+        tags$button(
+          id = paste0(id,"_expand"),
+          class = paste0("btn btn-box-tool action-button fa-2x"),
+
+          shiny::icon(expandIcon)
+
+        )
+    }
   }
 
   infoTag <- NULL
@@ -376,17 +399,17 @@ kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status =
     infoIcon <- "info-circle"
 
     infoTag <-
-                       tags$button(class = paste0("btn btn-default fa-2x"),
-                                   shiny::icon(infoIcon)
+      tags$button(class = paste0("btn btn-default fa-2x"),
+                  shiny::icon(infoIcon)
 
-    )
+      )
   }
   headerTag <- NULL
-  if (!is.null(titleTag) || !is.null(collapseTag) || !is.null(infoTag)) {
+  if (!is.null(titleTag) || !is.null(collapseTag) || !is.null(infoTag) || !is.null(expandableTag)) {
     headerTag <- div(class = "box-header",
                      titleTag,
-                      div(class = "box-tools pull-right",infoTag ,
-                      collapseTag))
+                     div(class = "box-tools pull-right",infoTag
+                         ,collapseTag,expandableTag))
 
   }
 
@@ -394,7 +417,7 @@ kpi_metric_box <- function(..., id = NULL, title = NULL, footer = NULL, status =
       div(class = boxClass,
           style = if (!is.null(style)) style,
           headerTag,
-          div(class = "box-body", style = "margin-left:20px;" , fluidRow(...)),
+          div(class = "box-body", fluidRow(...)),
           if (!is.null(footer)) div(class = "box-footer", footer)
       )
   )

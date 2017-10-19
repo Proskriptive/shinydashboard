@@ -6,7 +6,8 @@
 \usage{
 kpi_metric_box(..., id = NULL, title = NULL, footer = NULL,
   status = NULL, info, solidHeader = FALSE, background = NULL,
-  width = 12, height = NULL, collapsible = TRUE, collapsed = FALSE)
+  width = 12, height = NULL, collapsible = TRUE, collapsed = FALSE,
+  expandable = TRUE)
 }
 \arguments{
 \item{id}{is the unique id of html elemnt.}
